@@ -1,0 +1,2 @@
+defmodule ExCabify do
+end
