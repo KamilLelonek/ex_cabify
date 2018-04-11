@@ -9,6 +9,11 @@ defmodule ExCabify do
     |> maybe_add(scanner)
   end
 
+  def total(%ExCabify{basket: basket, pricing_rules: nil}), do: Basket.amount(basket)
+
+  def total(%ExCabify{basket: basket, pricing_rules: pricing_rules}),
+    do: pricing_rules.apply(basket)
+
   defp maybe_add(nil, _scanner), do: {:error, :product_not_found}
 
   defp maybe_add(product, %ExCabify{basket: basket} = scanner),

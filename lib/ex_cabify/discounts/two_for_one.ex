@@ -1,9 +1,14 @@
 defmodule ExCabify.Discounts.TwoForOne do
-  @behaviour ExCabify.Discount
+  @behaviour ExCabify.Discounts
+
+  alias ExCabify.Basket
 
   @impl true
   def applicable_to, do: "VOUCHER"
 
   @impl true
   def minimal_count, do: 2
+
+  @impl true
+  def apply(basket), do: Basket.amount(basket)
 end

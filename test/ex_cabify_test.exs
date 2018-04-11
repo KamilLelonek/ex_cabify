@@ -25,4 +25,14 @@ defmodule ExCabifyTest do
              } = ExCabify.scan(%ExCabify{}, "VOUCHER")
     end
   end
+
+  describe "total/1" do
+    test "should calculate the total price of scanned products when no pricing rules are given" do
+      {:ok, scanner} = ExCabify.scan(%ExCabify{}, "VOUCHER")
+      {:ok, scanner} = ExCabify.scan(scanner, "MUG")
+      {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
+
+      assert 32.5 = ExCabify.total(scanner)
+    end
+  end
 end
