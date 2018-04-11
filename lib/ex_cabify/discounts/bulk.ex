@@ -10,5 +10,5 @@ defmodule ExCabify.Discounts.Bulk do
   def minimal_count, do: 3
 
   @impl true
-  def apply(basket), do: Basket.amount(basket)
+  def amount(basket), do: Basket.amount(basket)
 end

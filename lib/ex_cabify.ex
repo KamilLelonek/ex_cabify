@@ -1,5 +1,5 @@
 defmodule ExCabify do
-  alias ExCabify.{Basket, Storage.Repo}
+  alias ExCabify.{Basket, Storage.Repo, Discounts}
 
   defstruct pricing_rules: nil, basket: %Basket{}
 
@@ -12,7 +12,7 @@ defmodule ExCabify do
   def total(%ExCabify{basket: basket, pricing_rules: nil}), do: Basket.amount(basket)
 
   def total(%ExCabify{basket: basket, pricing_rules: pricing_rules}),
-    do: pricing_rules.apply(basket)
+    do: Discounts.apply(basket, pricing_rules)
 
   defp maybe_add(nil, _scanner), do: {:error, :product_not_found}
 
