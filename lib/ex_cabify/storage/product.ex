@@ -1,5 +1,7 @@
 defmodule ExCabify.Storage.Product do
   @derive [Poison.Encoder]
 
-  defstruct ~w(code name price)a
+  defstruct code: "",
+            name: "",
+            price: 0
 end
