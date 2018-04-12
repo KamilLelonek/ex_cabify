@@ -31,3 +31,105 @@ Examples:
 
     Items: VOUCHER, TSHIRT, VOUCHER, VOUCHER, MUG, TSHIRT, TSHIRT
     Total: 74.50€
+
+## Usage
+
+Firstly, you need to initialize a scanner.
+
+You can do it without pricing rules:
+
+    iex(1)> scanner = %ExCabify{}
+    %ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
+
+with `Bulk` one:
+
+    iex(2)> scanner = ExCabify.new(ExCabify.Discounts.Bulk)
+    %ExCabify{
+      basket: %ExCabify.Basket{products: []},
+      pricing_rules: ExCabify.Discounts.Bulk
+    }
+
+or with `TwoForOne`:
+
+    iex(3)> scanner = ExCabify.new(ExCabify.Discounts.TwoForOne)
+    %ExCabify{
+      basket: %ExCabify.Basket{products: []},
+      pricing_rules: ExCabify.Discounts.TwoForOne
+    }
+
+Then, you are able to scan any product:
+
+    iex(4)> {:ok, scanner} = ExCabify.scan(scanner, "VOUCHER")
+    {:ok,
+     %ExCabify{
+       basket: %ExCabify.Basket{
+         products: [
+           %ExCabify.Storage.Product{
+             code: "VOUCHER",
+             name: "Cabify Voucher",
+             price: 5.0
+           }
+         ]
+       },
+       pricing_rules: ExCabify.Discounts.Bulk
+     }}
+    iex(5)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
+    {:ok,
+     %ExCabify{
+       basket: %ExCabify.Basket{
+         products: [
+           %ExCabify.Storage.Product{
+             code: "TSHIRT",
+             name: "Cabify T-Shirt",
+             price: 20.0
+           },
+           %ExCabify.Storage.Product{
+             code: "VOUCHER",
+             name: "Cabify Voucher",
+             price: 5.0
+           }
+         ]
+       },
+       pricing_rules: ExCabify.Discounts.Bulk
+     }}
+    iex(6)> {:ok, scanner} = ExCabify.scan(scanner, "MUG")
+    {:ok,
+     %ExCabify{
+       basket: %ExCabify.Basket{
+         products: [
+           %ExCabify.Storage.Product{
+             code: "MUG",
+             name: "Cafify Coffee Mug",
+             price: 7.5
+           },
+           %ExCabify.Storage.Product{
+             code: "TSHIRT",
+             name: "Cabify T-Shirt",
+             price: 20.0
+           },
+           %ExCabify.Storage.Product{
+             code: "VOUCHER",
+             name: "Cabify Voucher",
+             price: 5.0
+           }
+         ]
+       },
+       pricing_rules: ExCabify.Discounts.Bulk
+     }}
+
+Finally, you can calculate the total price:
+
+    iex(7)> ExCabify.total(scanner)
+    32.5
+
+## Testing
+
+To run the test suite, execute:
+
+    ➜  ex_cabify git:(master) ✗ mix test
+    ..........................
+
+    Finished in 0.1 seconds
+    26 tests, 0 failures
+
+    Randomized with seed 37474
