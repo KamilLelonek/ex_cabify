@@ -1,5 +1,7 @@
 # ex_cabify
 
+[![Build Status](https://travis-ci.org/KamilLelonek/ex_cabify.svg?branch=master)](https://travis-ci.org/KamilLelonek/ex_cabify)
+
 ##### Besides providing exceptional transportation services, Cabify also runs a physical store which sells (only) 3 products:
 
 ```
