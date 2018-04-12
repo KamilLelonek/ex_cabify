@@ -5,7 +5,7 @@ defmodule ExCabify.DiscountTest do
 
   alias ExCabify.Discounts.{TwoForOne, Bulk}
 
-  test("should not apply a Discount for an empty Basket") do
+  test "should not apply a Discount for an empty Basket" do
     refute Discounts.applies?(%Basket{}, Bulk)
     refute(Discounts.applies?(%Basket{}, TwoForOne))
   end
