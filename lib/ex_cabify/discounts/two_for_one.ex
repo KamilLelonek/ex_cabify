@@ -1,14 +1,60 @@
 defmodule ExCabify.Discounts.TwoForOne do
   @behaviour ExCabify.Discounts
 
-  alias ExCabify.Basket
+  alias ExCabify.{Basket, Storage.Product}
+
+  @reduced_price 0.0
+  @applicable_to "VOUCHER"
+  @minimal_count 2
 
   @impl true
-  def applicable_to, do: "VOUCHER"
+  def applicable_to, do: @applicable_to
 
   @impl true
-  def minimal_count, do: 2
+  def minimal_count, do: @minimal_count
 
   @impl true
-  def amount(basket), do: Basket.amount(basket)
+  def amount(%Basket{products: products} = basket) do
+    products
+    |> Enum.split_with(&applicable?/1)
+    |> maybe_applicable(basket)
+  end
+
+  defp maybe_applicable({applicable, not_applicable}, basket) do
+    applicable
+    |> Enum.chunk_every(minimal_count())
+    |> Enum.split_with(&enough?/1)
+    |> maybe_enough(not_applicable, basket)
+  end
+
+  defp maybe_enough({enough, not_enough}, not_applicable, basket) do
+    enough
+    |> Enum.map(&reduce_price/1)
+    |> sum_products(not_enough, not_applicable, basket)
+  end
+
+  defp sum_products(reduced_price, not_enough, not_applicable, basket) do
+    not_applicable
+    |> Kernel.++(not_enough)
+    |> Kernel.++(reduced_price)
+    |> List.flatten()
+    |> total(basket)
+  end
+
+  defp total(products, basket) do
+    basket
+    |> Map.replace!(:products, products)
+    |> Basket.amount()
+  end
+
+  defp applicable?(%Product{code: @applicable_to}), do: true
+  defp applicable?(%Product{code: _applicable_to}), do: false
+
+  defp enough?(list)
+       when length(list) >= @minimal_count,
+       do: true
+
+  defp enough?(_list), do: false
+
+  defp reduce_price([product | rest]), do: [%Product{product | price: @reduced_price} | rest]
 end
