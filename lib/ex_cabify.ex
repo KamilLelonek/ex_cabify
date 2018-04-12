@@ -3,6 +3,8 @@ defmodule ExCabify do
 
   defstruct pricing_rules: nil, basket: %Basket{}
 
+  def new(pricing_rules), do: %__MODULE__{pricing_rules: pricing_rules}
+
   def scan(%ExCabify{} = scanner, code) do
     code
     |> Repo.one()
