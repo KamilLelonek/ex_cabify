@@ -14,13 +14,7 @@ defmodule ExCabify.Discounts.TwoForOne do
   def minimal_count, do: @minimal_count
 
   @impl true
-  def amount(%Basket{products: products} = basket) do
-    products
-    |> Enum.split_with(&applicable?/1)
-    |> maybe_applicable(basket)
-  end
-
-  defp maybe_applicable({applicable, not_applicable}, basket) do
+  def amount({applicable, not_applicable}, basket) do
     applicable
     |> Enum.chunk_every(minimal_count())
     |> Enum.split_with(&enough?/1)
@@ -46,9 +40,6 @@ defmodule ExCabify.Discounts.TwoForOne do
     |> Map.replace!(:products, products)
     |> Basket.amount()
   end
-
-  defp applicable?(%Product{code: @applicable_to}), do: true
-  defp applicable?(%Product{code: _applicable_to}), do: false
 
   defp enough?(list)
        when length(list) >= @minimal_count,

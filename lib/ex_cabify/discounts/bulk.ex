@@ -16,13 +16,7 @@ defmodule ExCabify.Discounts.Bulk do
   def reduced_price, do: @reduced_price
 
   @impl true
-  def amount(%Basket{products: products} = basket) do
-    products
-    |> Enum.split_with(&applicable?/1)
-    |> maybe_applicable(basket)
-  end
-
-  defp maybe_applicable({applicable, not_applicable}, basket) do
+  def amount({applicable, not_applicable}, basket) do
     applicable
     |> Enum.count()
     |> maybe_enough(applicable, not_applicable, basket)
@@ -50,9 +44,6 @@ defmodule ExCabify.Discounts.Bulk do
     |> Map.replace!(:products, products)
     |> Basket.amount()
   end
-
-  defp applicable?(%Product{code: @applicable_to}), do: true
-  defp applicable?(%Product{code: _applicable_to}), do: false
 
   defp reduce_price(product), do: %Product{product | price: @reduced_price}
 end
