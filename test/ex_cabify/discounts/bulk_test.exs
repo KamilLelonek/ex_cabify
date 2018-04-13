@@ -1,7 +1,7 @@
 defmodule ExCabify.BulkTest do
   use ExUnit.Case, async: true
 
-  alias ExCabify.{Discounts.Bulk, Basket, Storage.Product}
+  alias ExCabify.{Discounts, Discounts.Bulk, Basket, Storage.Product}
 
   @tshirt_code "TSHIRT"
   @tshirt_price 100
@@ -10,13 +10,15 @@ defmodule ExCabify.BulkTest do
   test "should consider a reduced price" do
     products = [@tshirt, @tshirt, @tshirt, @tshirt]
 
-    assert Bulk.reduced_price() * Enum.count(products) == Bulk.amount(%Basket{products: products})
+    assert Bulk.reduced_price() * Enum.count(products) ==
+             Discounts.apply(%Basket{products: products}, Bulk)
   end
 
   test "should not consider a reduced price" do
     products = [@tshirt, @tshirt]
 
-    assert @tshirt_price * Enum.count(products) == Bulk.amount(%Basket{products: products})
+    assert @tshirt_price * Enum.count(products) ==
+             Discounts.apply(%Basket{products: products}, Bulk)
   end
 
   test "should count other products with reduced price" do
@@ -31,7 +33,7 @@ defmodule ExCabify.BulkTest do
     basket = %Basket{products: products}
     tshirts_count = Enum.count(products, &(&1.code == @tshirt_code))
 
-    assert Bulk.reduced_price() * tshirts_count + 5.0 + 7.5 == Bulk.amount(basket)
+    assert Bulk.reduced_price() * tshirts_count + 5.0 + 7.5 == Discounts.apply(basket, Bulk)
   end
 
   test "should count other products without reduced price" do
@@ -46,6 +48,6 @@ defmodule ExCabify.BulkTest do
     basket = %Basket{products: products}
     tshirts_count = Enum.count(products, &(&1.code == @tshirt_code))
 
-    assert @tshirt_price * tshirts_count + 5.0 + 5.0 + 5.0 == Bulk.amount(basket)
+    assert @tshirt_price * tshirts_count + 5.0 + 5.0 + 5.0 == Discounts.apply(basket, Bulk)
   end
 end

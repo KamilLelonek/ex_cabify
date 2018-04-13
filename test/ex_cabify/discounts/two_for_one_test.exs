@@ -1,7 +1,7 @@
 defmodule ExCabify.TwoForOneTest do
   use ExUnit.Case, async: true
 
-  alias ExCabify.{Discounts.TwoForOne, Basket, Storage.Product}
+  alias ExCabify.{Discounts, Discounts.TwoForOne, Basket, Storage.Product}
 
   @voucher_code "VOUCHER"
   @voucher_price 5
@@ -10,27 +10,27 @@ defmodule ExCabify.TwoForOneTest do
   test "should give two Vouchers for free" do
     products = [@voucher, @voucher, @voucher, @voucher, @voucher]
 
-    assert 15 == TwoForOne.amount(%Basket{products: products})
+    assert 15 == Discounts.apply(%Basket{products: products}, TwoForOne)
 
     products = [@voucher, @voucher, @voucher, @voucher]
 
-    assert 10 == TwoForOne.amount(%Basket{products: products})
+    assert 10 == Discounts.apply(%Basket{products: products}, TwoForOne)
   end
 
   test "should give one Voucher for free" do
     products = [@voucher, @voucher, @voucher]
 
-    assert 10 == TwoForOne.amount(%Basket{products: products})
+    assert 10 == Discounts.apply(%Basket{products: products}, TwoForOne)
 
     products = [@voucher, @voucher]
 
-    assert 5 == TwoForOne.amount(%Basket{products: products})
+    assert 5 == Discounts.apply(%Basket{products: products}, TwoForOne)
   end
 
   test "should not give any free Voucher" do
     products = [@voucher]
 
-    assert 5 == TwoForOne.amount(%Basket{products: products})
+    assert 5 == Discounts.apply(%Basket{products: products}, TwoForOne)
   end
 
   test "should count other products with reduced price" do
@@ -42,7 +42,7 @@ defmodule ExCabify.TwoForOneTest do
       %Product{code: "TSHIRT", price: 20.0}
     ]
 
-    assert 5.0 + 5.0 + 7.5 + 20.0 == TwoForOne.amount(%Basket{products: products})
+    assert 5.0 + 5.0 + 7.5 + 20.0 == Discounts.apply(%Basket{products: products}, TwoForOne)
   end
 
   test "should count other products without reduced price" do
@@ -51,6 +51,6 @@ defmodule ExCabify.TwoForOneTest do
       %Product{code: "MUG", price: 7.5}
     ]
 
-    assert 7.5 + 5 == TwoForOne.amount(%Basket{products: products})
+    assert 7.5 + 5 == Discounts.apply(%Basket{products: products}, TwoForOne)
   end
 end
