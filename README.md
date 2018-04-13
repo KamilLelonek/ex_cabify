@@ -36,172 +36,188 @@ Examples:
 
 ## Usage
 
-Firstly, you need to initialize a scanner.
+Firstly, you need to initialize a **Scanner**.
 
-You can do it without pricing rules:
+You can do it without any **Pricing Rule**:
 
-    iex(1)> scanner = %ExCabify{}
-    %ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
+```elixir
+iex(1)> scanner = %ExCabify{}
+%ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
+```
 
 with `Bulk` one:
 
-    iex(2)> scanner = ExCabify.new(ExCabify.Discounts.Bulk)
-    %ExCabify{
-      basket: %ExCabify.Basket{products: []},
-      pricing_rules: ExCabify.Discounts.Bulk
-    }
+```elixir
+iex(2)> scanner = ExCabify.new(ExCabify.Discounts.Bulk)
+%ExCabify{
+  basket: %ExCabify.Basket{products: []},
+  pricing_rules: ExCabify.Discounts.Bulk
+}
+```
 
 or with `TwoForOne`:
 
-    iex(3)> scanner = ExCabify.new(ExCabify.Discounts.TwoForOne)
-    %ExCabify{
-      basket: %ExCabify.Basket{products: []},
-      pricing_rules: ExCabify.Discounts.TwoForOne
-    }
+```elixir
+iex(3)> scanner = ExCabify.new(ExCabify.Discounts.TwoForOne)
+%ExCabify{
+  basket: %ExCabify.Basket{products: []},
+  pricing_rules: ExCabify.Discounts.TwoForOne
+}
+```
 
-Then, you are able to scan any product:
+Then, you are able to scan any `Product`:
 
-    iex(4)> {:ok, scanner} = ExCabify.scan(scanner, "VOUCHER")
-    {:ok,
-     %ExCabify{
-       basket: %ExCabify.Basket{
-         products: [
-           %ExCabify.Storage.Product{
-             code: "VOUCHER",
-             name: "Cabify Voucher",
-             price: 5.0
-           }
-         ]
+```elixir
+iex(4)> {:ok, scanner} = ExCabify.scan(scanner, "VOUCHER")
+{:ok,
+ %ExCabify{
+   basket: %ExCabify.Basket{
+     products: [
+       %ExCabify.Storage.Product{
+         code: "VOUCHER",
+         name: "Cabify Voucher",
+         price: 5.0
+       }
+     ]
+   },
+   pricing_rules: ExCabify.Discounts.Bulk
+ }}
+
+iex(5)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
+{:ok,
+ %ExCabify{
+   basket: %ExCabify.Basket{
+     products: [
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
        },
-       pricing_rules: ExCabify.Discounts.Bulk
-     }}
+       %ExCabify.Storage.Product{
+         code: "VOUCHER",
+         name: "Cabify Voucher",
+         price: 5.0
+       }
+     ]
+   },
+   pricing_rules: ExCabify.Discounts.Bulk
+ }}
 
-    iex(5)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-    {:ok,
-     %ExCabify{
-       basket: %ExCabify.Basket{
-         products: [
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           },
-           %ExCabify.Storage.Product{
-             code: "VOUCHER",
-             name: "Cabify Voucher",
-             price: 5.0
-           }
-         ]
+iex(6)> {:ok, scanner} = ExCabify.scan(scanner, "MUG")
+{:ok,
+ %ExCabify{
+   basket: %ExCabify.Basket{
+     products: [
+       %ExCabify.Storage.Product{
+         code: "MUG",
+         name: "Cafify Coffee Mug",
+         price: 7.5
        },
-       pricing_rules: ExCabify.Discounts.Bulk
-     }}
-
-    iex(6)> {:ok, scanner} = ExCabify.scan(scanner, "MUG")
-    {:ok,
-     %ExCabify{
-       basket: %ExCabify.Basket{
-         products: [
-           %ExCabify.Storage.Product{
-             code: "MUG",
-             name: "Cafify Coffee Mug",
-             price: 7.5
-           },
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           },
-           %ExCabify.Storage.Product{
-             code: "VOUCHER",
-             name: "Cabify Voucher",
-             price: 5.0
-           }
-         ]
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
        },
-       pricing_rules: ExCabify.Discounts.Bulk
-     }}
+       %ExCabify.Storage.Product{
+         code: "VOUCHER",
+         name: "Cabify Voucher",
+         price: 5.0
+       }
+     ]
+   },
+   pricing_rules: ExCabify.Discounts.Bulk
+ }}
+```
 
-Finally, you can calculate the total price:
+Finally, you can calculate the **Total Price**:
 
-    iex(7)> ExCabify.total(scanner)
-    32.5
+```elixir
+iex(7)> ExCabify.total(scanner)
+32.5
+```
 
-If you scan an invalid Product, you will get this error:
+If you scan an invalid `Product`, you will get this error:
 
-    iex(1)> scanner = %ExCabify{}
-    %ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
-    iex(2)> ExCabify.scan(scanner, "CHOCOLATE")
-    {:error, :product_not_found}
+```elixir
+iex(1)> scanner = %ExCabify{}
+%ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
+iex(2)> ExCabify.scan(scanner, "CHOCOLATE")
+{:error, :product_not_found}
+```
 
-You can also scan Products without any Pricing Rule:
+If scan `Products` without any **Pricing Rule**:
 
-    iex(1)> scanner = %ExCabify{}
-    %ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
+```elixir
+iex(1)> scanner = %ExCabify{}
+%ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
 
-    iex(2)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-    {:ok,
-     %ExCabify{
-       basket: %ExCabify.Basket{
-         products: [
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           }
-         ]
+iex(2)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
+{:ok,
+ %ExCabify{
+   basket: %ExCabify.Basket{
+     products: [
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
+       }
+     ]
+   },
+   pricing_rules: nil
+ }}
+
+iex(3)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
+{:ok,
+ %ExCabify{
+   basket: %ExCabify.Basket{
+     products: [
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
        },
-       pricing_rules: nil
-     }}
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
+       }
+     ]
+   },
+   pricing_rules: nil
+ }}
 
-    iex(3)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-    {:ok,
-     %ExCabify{
-       basket: %ExCabify.Basket{
-         products: [
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           },
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           }
-         ]
+iex(4)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
+{:ok,
+ %ExCabify{
+   basket: %ExCabify.Basket{
+     products: [
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
        },
-       pricing_rules: nil
-     }}
-
-    iex(4)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-    {:ok,
-     %ExCabify{
-       basket: %ExCabify.Basket{
-         products: [
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           },
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           },
-           %ExCabify.Storage.Product{
-             code: "TSHIRT",
-             name: "Cabify T-Shirt",
-             price: 20.0
-           }
-         ]
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
        },
-       pricing_rules: nil
-     }}
+       %ExCabify.Storage.Product{
+         code: "TSHIRT",
+         name: "Cabify T-Shirt",
+         price: 20.0
+       }
+     ]
+   },
+   pricing_rules: nil
+ }}
+```
 
-but you will get no discount then:
+You will get no discount then:
 
-    iex(5)> ExCabify.total(scanner)
-    60.0
+```elixir
+iex(5)> ExCabify.total(scanner)
+60.0
+```
 
 ## Testing
 
