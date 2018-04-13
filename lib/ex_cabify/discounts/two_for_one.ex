@@ -24,10 +24,10 @@ defmodule ExCabify.Discounts.TwoForOne do
     applicable
     |> Enum.chunk_every(minimal_count())
     |> Enum.split_with(&enough?/1)
-    |> maybe_enough(not_applicable, basket)
+    |> reduce_price(not_applicable, basket)
   end
 
-  defp maybe_enough({enough, not_enough}, not_applicable, basket) do
+  defp reduce_price({enough, not_enough}, not_applicable, basket) do
     enough
     |> Enum.map(&reduce_price/1)
     |> sum_products(not_enough, not_applicable, basket)
