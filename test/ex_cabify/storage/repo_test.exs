@@ -31,5 +31,9 @@ defmodule ExCabify.Storage.RepoTest do
 
       assert %Product{code: ^code} = Repo.one(code)
     end
+
+    test "should not load an unknown Product" do
+      refute Repo.one("CHOCOLATE")
+    end
   end
 end
