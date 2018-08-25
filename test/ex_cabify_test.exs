@@ -1,7 +1,8 @@
 defmodule ExCabifyTest do
   use ExUnit.Case, async: true
 
-  alias ExCabify.{Basket, Storage.Product, Discounts}
+  alias ExCabify.Discounts
+  alias ExCabify.Storage.{Basket, Product}
 
   describe "scan/2" do
     test "should not scan an unknown Product" do

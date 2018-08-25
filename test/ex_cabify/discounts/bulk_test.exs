@@ -1,7 +1,9 @@
 defmodule ExCabify.BulkTest do
   use ExUnit.Case, async: true
 
-  alias ExCabify.{Discounts, Discounts.Bulk, Basket, Storage.Product}
+  alias ExCabify.Discounts
+  alias ExCabify.Discounts.Bulk
+  alias ExCabify.Storage.{Basket, Product}
 
   @tshirt_code "TSHIRT"
   @tshirt_price 100

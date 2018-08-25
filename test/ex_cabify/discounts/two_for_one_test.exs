@@ -1,7 +1,9 @@
 defmodule ExCabify.TwoForOneTest do
   use ExUnit.Case, async: true
 
-  alias ExCabify.{Discounts, Discounts.TwoForOne, Basket, Storage.Product}
+  alias ExCabify.Discounts
+  alias ExCabify.Discounts.TwoForOne
+  alias ExCabify.Storage.{Basket, Product}
 
   @voucher_code "VOUCHER"
   @voucher_price 5

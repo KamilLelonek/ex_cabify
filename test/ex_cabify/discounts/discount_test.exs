@@ -1,9 +1,9 @@
 defmodule ExCabify.DiscountTest do
   use ExUnit.Case, async: true
 
-  alias ExCabify.{Discounts, Basket, Storage.Product}
-
+  alias ExCabify.Discounts
   alias ExCabify.Discounts.{TwoForOne, Bulk}
+  alias ExCabify.Storage.{Basket, Product}
 
   describe "applies?/2" do
     test "should not apply a Discount for an empty Basket" do
