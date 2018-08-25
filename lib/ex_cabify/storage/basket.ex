@@ -1,4 +1,4 @@
-defmodule ExCabify.Basket do
+defmodule ExCabify.Storage.Basket do
   alias ExCabify.Storage.Product
   alias __MODULE__
 
@@ -10,8 +10,4 @@ defmodule ExCabify.Basket do
 
   def put(%Basket{products: products} = basket, %Product{} = product),
     do: %Basket{basket | products: [product | products]}
-
-  def amount(%Basket{products: products}), do: Enum.reduce(products, 0, &calculate_amount/2)
-
-  defp calculate_amount(%Product{price: price}, total), do: price + total
 end
