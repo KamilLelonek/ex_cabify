@@ -1,7 +1,7 @@
 defmodule ExCabify.Discounts.TwoForOne do
   @behaviour ExCabify.Discounts
 
-  alias ExCabify.{Basket, Storage.Product}
+  alias ExCabify.Storage.Product
 
   @reduced_price 0.0
   @applicable_to "VOUCHER"
@@ -38,7 +38,7 @@ defmodule ExCabify.Discounts.TwoForOne do
   defp total(products, basket) do
     basket
     |> Map.replace!(:products, products)
-    |> Basket.amount()
+    |> ExCabify.amount()
   end
 
   defp enough?(list)

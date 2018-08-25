@@ -1,7 +1,7 @@
 defmodule ExCabify.Discounts.Bulk do
   @behaviour ExCabify.Discounts
 
-  alias ExCabify.{Basket, Storage.Product}
+  alias ExCabify.Storage.Product
 
   @reduced_price 19.0
   @applicable_to "TSHIRT"
@@ -30,7 +30,7 @@ defmodule ExCabify.Discounts.Bulk do
     |> sum_products(not_applicable, basket)
   end
 
-  defp maybe_enough(_count, _applicable, _not_applicable, basket), do: Basket.amount(basket)
+  defp maybe_enough(_count, _applicable, _not_applicable, basket), do: ExCabify.amount(basket)
 
   defp sum_products(reduced_price, not_applicable, basket) do
     reduced_price
@@ -42,7 +42,7 @@ defmodule ExCabify.Discounts.Bulk do
   defp total(products, basket) do
     basket
     |> Map.replace!(:products, products)
-    |> Basket.amount()
+    |> ExCabify.amount()
   end
 
   defp reduce_price(product), do: %Product{product | price: @reduced_price}

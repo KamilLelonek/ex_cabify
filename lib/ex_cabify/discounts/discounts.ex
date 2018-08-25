@@ -1,5 +1,5 @@
 defmodule ExCabify.Discounts do
-  alias ExCabify.{Basket, Storage.Product}
+  alias ExCabify.Storage.{Basket, Product}
 
   @callback applicable_to() :: String.t()
   @callback minimal_count() :: non_neg_integer()
@@ -19,7 +19,7 @@ defmodule ExCabify.Discounts do
     |> maybe_discount(basket, implementation)
   end
 
-  defp maybe_discount(false, basket, _implementation), do: Basket.amount(basket)
+  defp maybe_discount(false, basket, _implementation), do: ExCabify.amount(basket)
 
   defp maybe_discount(true, %Basket{products: products} = basket, implementation) do
     products
