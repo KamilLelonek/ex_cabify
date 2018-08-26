@@ -11,8 +11,8 @@ defmodule ExCabify.PricingRules do
     |> Enum.map(&to_struct/1)
   end
 
-  def applies?(%{applicable_code: applicable_code, applicable_count: applicable_count}, codes),
-    do: Enum.count(codes, &(&1 == applicable_code)) >= applicable_count
+  def applies?(%{applicable_code: applicable_code, applicable_count: applicable_count}, products),
+    do: Enum.count(products, &(&1.code == applicable_code)) >= applicable_count
 
   defp files(wildcard),
     do: Path.wildcard(wildcard)
