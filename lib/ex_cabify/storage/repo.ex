@@ -11,5 +11,9 @@ defmodule ExCabify.Storage.Repo do
     |> Poison.decode!(keys: :atoms, as: [%Product{}])
   end
 
-  def one(code), do: Enum.find(all(), &(&1.code == code))
+  def one(code),
+    do: Enum.find(all(), &(&1.code == code))
+
+  def all_by_codes(codes),
+    do: Enum.filter(all(), &(&1.code in codes))
 end

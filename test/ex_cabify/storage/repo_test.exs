@@ -36,4 +36,16 @@ defmodule ExCabify.Storage.RepoTest do
       refute Repo.one("CHOCOLATE")
     end
   end
+
+  describe "all_by_codes/1" do
+    test "should load one Product by its code" do
+      code = "MUG"
+
+      assert [%Product{code: ^code}] = Repo.all_by_codes([code])
+    end
+
+    test "should not load an unknown Products" do
+      assert [] == Repo.all_by_codes(["CHOCOLATE"])
+    end
+  end
 end
