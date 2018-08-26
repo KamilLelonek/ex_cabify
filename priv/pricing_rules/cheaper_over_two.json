@@ -1,6 +1,6 @@
 {
   "kind": "BulkPurchase",
-  "minimal_count": 3,
+  "applicable_count": 3,
   "reduced_prize": 19.0,
   "applicable_code": "TSHIRT"
 }
