@@ -14,6 +14,9 @@ defmodule ExCabify.Storage.Repo do
   def one(code),
     do: Enum.find(all(), &(&1.code == code))
 
-  def all_by_codes(codes),
-    do: Enum.filter(all(), &(&1.code in codes))
+  def all_by_codes(codes) do
+    codes
+    |> Enum.map(&one/1)
+    |> Enum.reject(&is_nil/1)
+  end
 end
