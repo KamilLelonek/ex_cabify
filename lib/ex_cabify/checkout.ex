@@ -10,6 +10,16 @@ defmodule ExCabify.Checkout do
   def scan(%__MODULE__{codes: codes} = checkout, code),
     do: %__MODULE__{checkout | codes: [code | codes]}
 
-  def total(%__MODULE__{codes: codes, pricing_rules: pricing_rules}),
-    do: Enum.reduce(pricing_rules, Repo.all_by_codes(codes), &PricingRules.refine/2)
+  def total(%__MODULE__{codes: codes, pricing_rules: pricing_rules}) do
+    pricing_rules
+    |> Enum.reduce(products(codes), &refine/2)
+    |> Enum.reduce(0, &sum/2)
+  end
+
+  defp products(codes), do: Repo.all_by_codes(codes)
+
+  defp refine(pricing_rule, products),
+    do: PricingRules.refine(pricing_rule, products)
+
+  defp sum(%{price: price}, sum), do: sum + price
 end
