@@ -36,187 +36,112 @@ Examples:
 
 ## Usage
 
-Firstly, you need to initialize a **Scanner**.
+Firstly, you need to initialize a **Checkout**.
 
 You can do it without any **Pricing Rule**:
 
 ```elixir
-iex(1)> scanner = %ExCabify{}
-%ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
+iex(1)> checkout = ExCabify.Checkout.new()
+%ExCabify.Checkout{codes: [], pricing_rules: []}
 ```
 
-with `Bulk` one:
+or with all of them:
 
 ```elixir
-iex(2)> scanner = ExCabify.new(ExCabify.Discounts.Bulk)
-%ExCabify{
-  basket: %ExCabify.Basket{products: []},
-  pricing_rules: ExCabify.Discounts.Bulk
+iex(2)> pricing_rules = ExCabify.PricingRules.all()
+[
+  %ExCabify.PricingRules.BulkPurchase{
+    applicable_code: "TSHIRT",
+    applicable_count: 3,
+    reduced_prize: 19.0
+  },
+  %ExCabify.PricingRules.XForY{
+    applicable_code: "VOUCHER",
+    applicable_count: 2,
+    reduced_count: 1
+  }
+]
+
+iex(3)> checkout = ExCabify.Checkout.new(pricing_rules)
+%ExCabify.Checkout{
+  codes: [],
+  pricing_rules: [
+    %ExCabify.PricingRules.BulkPurchase{
+      applicable_code: "TSHIRT",
+      applicable_count: 3,
+      reduced_prize: 19.0
+    },
+    %ExCabify.PricingRules.XForY{
+      applicable_code: "VOUCHER",
+      applicable_count: 2,
+      reduced_count: 1
+    }
+  ]
 }
 ```
 
-or with `TwoForOne`:
+You can define them in `priv/pricing_rules/` directory.
+
+Then, you are able to scan any code:
 
 ```elixir
-iex(3)> scanner = ExCabify.new(ExCabify.Discounts.TwoForOne)
-%ExCabify{
-  basket: %ExCabify.Basket{products: []},
-  pricing_rules: ExCabify.Discounts.TwoForOne
+iex(4)> checkout = ExCabify.Checkout.scan(checkout, "TSHIRT")
+%ExCabify.Checkout{
+  codes: ["TSHIRT"],
+  pricing_rules: [
+    %ExCabify.PricingRules.BulkPurchase{
+      applicable_code: "TSHIRT",
+      applicable_count: 3,
+      reduced_prize: 19.0
+    },
+    %ExCabify.PricingRules.XForY{
+      applicable_code: "VOUCHER",
+      applicable_count: 2,
+      reduced_count: 1
+    }
+  ]
 }
-```
 
-Then, you are able to scan any `Product`:
+iex(5)> checkout = ExCabify.Checkout.scan(checkout, "TSHIRT")
+%ExCabify.Checkout{
+  codes: ["TSHIRT", "TSHIRT"],
+  pricing_rules: [
+    %ExCabify.PricingRules.BulkPurchase{
+      applicable_code: "TSHIRT",
+      applicable_count: 3,
+      reduced_prize: 19.0
+    },
+    %ExCabify.PricingRules.XForY{
+      applicable_code: "VOUCHER",
+      applicable_count: 2,
+      reduced_count: 1
+    }
+  ]
+}
 
-```elixir
-iex(4)> {:ok, scanner} = ExCabify.scan(scanner, "VOUCHER")
-{:ok,
- %ExCabify{
-   basket: %ExCabify.Basket{
-     products: [
-       %ExCabify.Storage.Product{
-         code: "VOUCHER",
-         name: "Cabify Voucher",
-         price: 5.0
-       }
-     ]
-   },
-   pricing_rules: ExCabify.Discounts.Bulk
- }}
-
-iex(5)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-{:ok,
- %ExCabify{
-   basket: %ExCabify.Basket{
-     products: [
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       },
-       %ExCabify.Storage.Product{
-         code: "VOUCHER",
-         name: "Cabify Voucher",
-         price: 5.0
-       }
-     ]
-   },
-   pricing_rules: ExCabify.Discounts.Bulk
- }}
-
-iex(6)> {:ok, scanner} = ExCabify.scan(scanner, "MUG")
-{:ok,
- %ExCabify{
-   basket: %ExCabify.Basket{
-     products: [
-       %ExCabify.Storage.Product{
-         code: "MUG",
-         name: "Cafify Coffee Mug",
-         price: 7.5
-       },
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       },
-       %ExCabify.Storage.Product{
-         code: "VOUCHER",
-         name: "Cabify Voucher",
-         price: 5.0
-       }
-     ]
-   },
-   pricing_rules: ExCabify.Discounts.Bulk
- }}
+iex(6)> checkout = ExCabify.Checkout.scan(checkout, "MUG")
+%ExCabify.Checkout{
+  codes: ["MUG", "TSHIRT", "TSHIRT"],
+  pricing_rules: [
+    %ExCabify.PricingRules.BulkPurchase{
+      applicable_code: "TSHIRT",
+      applicable_count: 3,
+      reduced_prize: 19.0
+    },
+    %ExCabify.PricingRules.XForY{
+      applicable_code: "VOUCHER",
+      applicable_count: 2,
+      reduced_count: 1
+    }
+  ]
+}
 ```
 
 Finally, you can calculate the **Total Price**:
 
 ```elixir
-iex(7)> ExCabify.total(scanner)
+iex(7)> ExCabify.Checkout.total(checkout)
 32.5
-```
-
-If you scan an invalid `Product`, you will get this error:
-
-```elixir
-iex(1)> scanner = %ExCabify{}
-%ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
-iex(2)> ExCabify.scan(scanner, "CHOCOLATE")
-{:error, :product_not_found}
-```
-
-If scan `Products` without any **Pricing Rule**:
-
-```elixir
-iex(1)> scanner = %ExCabify{}
-%ExCabify{basket: %ExCabify.Basket{products: []}, pricing_rules: nil}
-
-iex(2)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-{:ok,
- %ExCabify{
-   basket: %ExCabify.Basket{
-     products: [
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       }
-     ]
-   },
-   pricing_rules: nil
- }}
-
-iex(3)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-{:ok,
- %ExCabify{
-   basket: %ExCabify.Basket{
-     products: [
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       },
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       }
-     ]
-   },
-   pricing_rules: nil
- }}
-
-iex(4)> {:ok, scanner} = ExCabify.scan(scanner, "TSHIRT")
-{:ok,
- %ExCabify{
-   basket: %ExCabify.Basket{
-     products: [
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       },
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       },
-       %ExCabify.Storage.Product{
-         code: "TSHIRT",
-         name: "Cabify T-Shirt",
-         price: 20.0
-       }
-     ]
-   },
-   pricing_rules: nil
- }}
-```
-
-You will get no discount then:
-
-```elixir
-iex(5)> ExCabify.total(scanner)
-60.0
 ```
 
 ## Testing
